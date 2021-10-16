@@ -1,13 +1,16 @@
-
+// DOM Ids and elements
 let ID_PARENT = 'p5-canvas-container';
 let ID_DATA = 'interface-data';
 let ID_RATE = 'interface-rate';
 let ID_RESTART = 'interface-restart';
 
-let canvas;
 let INTERFACE_DATA;
 let INTERFACE_RESTART;
 let INTERFACE_RATE;
+
+// 
+let canvas;
+let my_array = [];
 
 
 function setup() {
@@ -18,8 +21,11 @@ function setup() {
   // Initialize interface stuff
   INTERFACE_DATA = document.getElementById(ID_DATA);
   INTERFACE_RESTART = document.getElementById(ID_RESTART);
+  INTERFACE_RESTART.addEventListener("click", parseInputData, false);
   INTERFACE_RATE = document.getElementById(ID_RATE);
   //INTERFACE_RATE.onchange = update speed;
+
+  parseInputData();
 
   render();
 }
@@ -31,6 +37,35 @@ function windowResized() {
 	resizeCanvas(parseInt(parentStyle.width), parseInt(parentStyle.height));
 	render();
 }
+
+
+function parseInputData(){
+  my_array = [];
+  let raw_data = INTERFACE_DATA.value;
+  let number = 0;
+  let isPrevCharNumber = false;
+  for(let i = 0; i < raw_data.length; i++){
+    let char = raw_data[i];
+    if(!isNaN(char)){ // Current char is a number
+      char = parseInt(char);
+      if(isPrevCharNumber){
+        number *= 10;
+      }
+      number += char;
+      isPrevCharNumber = true;
+    }
+    else{   // Current char is NOT a number
+      if(isPrevCharNumber){
+        my_array.push(number);
+        number = 0;
+        isPrevCharNumber = false;
+      }
+    }
+  }
+  console.log(my_array);
+}
+
+
 
 
 
