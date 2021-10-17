@@ -20,6 +20,10 @@ body {
   background-color: #f5f7e8 !important;
 }
 
+.hide {
+  display: none;
+}
+
 .grid-container {
   display: -ms-grid;
   display: grid;

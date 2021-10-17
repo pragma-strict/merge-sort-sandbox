@@ -17,6 +17,10 @@ body{
    background-color: rgb(245, 247, 232) !important;
 }
 
+.hide{
+   display: none;
+}
+
 .grid-container{
    display: grid;
    min-height: 100vh;
