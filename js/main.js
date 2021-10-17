@@ -113,14 +113,14 @@ function updateFormFieldVisibility(){
   let inputSizeDiv = document.getElementById("interface-input-size-wrapper");
   let dataInputDiv = document.getElementById("interface-data-wrapper");
   if(document.getElementById("interface-random-data").checked){
-     inputSizeDiv.classList.remove("hide");
-     dataInputDiv.classList.add("hide");
-     isRandomDataEnabled = true;
+    inputSizeDiv.classList.remove("hide");
+    dataInputDiv.classList.add("hide");
+    isRandomDataEnabled = true;
   }
   else{
-     inputSizeDiv.classList.add("hide");
-     dataInputDiv.classList.remove("hide");
-     isRandomDataEnabled = false;
+    inputSizeDiv.classList.add("hide");
+    dataInputDiv.classList.remove("hide");
+    isRandomDataEnabled = false;
   }
 }
 
