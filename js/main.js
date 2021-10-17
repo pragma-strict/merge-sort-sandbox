@@ -10,7 +10,7 @@ let INTERFACE_RATE;
 
 // 
 let canvas;
-let my_array = [];
+let input_parsed = [];
 
 
 function setup() {
@@ -40,7 +40,7 @@ function windowResized() {
 
 
 function parseInputData(){
-  my_array = [];
+  input_parsed = [];
   let raw_data = INTERFACE_DATA.value;
   let number = 0;
   let isPrevCharNumber = false;
@@ -56,13 +56,17 @@ function parseInputData(){
     }
     else{   // Current char is NOT a number
       if(isPrevCharNumber){
-        my_array.push(number);
+        input_parsed.push(number);
         number = 0;
         isPrevCharNumber = false;
       }
     }
   }
-  console.log(my_array);
+
+  // If the string ended on a number, include it too.
+  if(isPrevCharNumber){
+    input_parsed.push(number);
+  }
 }
 
 
