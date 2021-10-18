@@ -1,8 +1,11 @@
 // DOM Ids and elements
 let ID_PARENT = 'p5-canvas-container';
 let ID_DATA = 'interface-data';
+let ID_DATA_WRAPPER = 'interface-data-wrapper';
 let ID_INPUT_SIZE = 'interface-input-size';
+let ID_INPUT_SIZE_WRAPPER = 'interface-input-size-wrapper';
 let ID_RATE = 'interface-rate';
+let ID_USE_CUSTOM_DATA = 'interface-custom-data';
 //let ID_RESTART = 'interface-restart';
 
 let INTERFACE_DATA;
@@ -13,7 +16,7 @@ let INTERFACE_RATE;
 // 
 let canvas;
 let input_full = [];
-let isRandomDataEnabled = true;
+let isCustomDataEnabled = false;
 
 
 // Style variables
@@ -50,17 +53,18 @@ function windowResized() {
 // Either generates input or calls parseInputData(). Input will be ready after calling.
 function getInput(){
   input_full = []; // Clear previous input
-  if(isRandomDataEnabled){
+  if(isCustomDataEnabled){
+    parseInputData();
+  }
+  else{
     let input_size = INTERFACE_INPUT_SIZE.value;
     for(let i = 0; i < input_size; i++){
       input_full.push(floor(Math.random() * input_size));
     }
   }
-  else{
-    parseInputData();
-  }
   mergeSort();
 }
+
 
 
 // Runs merge sort and renders the result
@@ -70,13 +74,14 @@ function mergeSort(){
 }
 
 
+
 // The recursive component of the merge sort function
 function mergeSortRecursive(input){
   // Base case
   if(input.length <= 1){
     return input;
   }
-  
+
   // Split step
   let slice_index = floor(input.length/2);
   let p1 = input.slice(0, slice_index);
@@ -110,17 +115,17 @@ function mergeSortRecursive(input){
 
 // Shows and hides fields in the form depending on whether input is generated or not
 function updateFormFieldVisibility(){
-  let inputSizeDiv = document.getElementById("interface-input-size-wrapper");
-  let dataInputDiv = document.getElementById("interface-data-wrapper");
-  if(document.getElementById("interface-random-data").checked){
-    inputSizeDiv.classList.remove("hide");
-    dataInputDiv.classList.add("hide");
-    isRandomDataEnabled = true;
-  }
-  else{
+  let inputSizeDiv = document.getElementById(ID_INPUT_SIZE_WRAPPER);
+  let dataInputDiv = document.getElementById(ID_DATA_WRAPPER);
+  if(document.getElementById(ID_USE_CUSTOM_DATA).checked){
     inputSizeDiv.classList.add("hide");
     dataInputDiv.classList.remove("hide");
-    isRandomDataEnabled = false;
+    isCustomDataEnabled = true;
+  }
+  else{
+    inputSizeDiv.classList.remove("hide");
+    dataInputDiv.classList.add("hide");
+    isCustomDataEnabled = false;
   }
 }
 
@@ -166,7 +171,7 @@ function tick(){
 
 function draw(){
   tick();
-  render();
+  //render();
 }
 
 
