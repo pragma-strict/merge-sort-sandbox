@@ -1,18 +1,18 @@
 @media screen and (orientation: portrait) {
   .grid-container {
-    -ms-grid-columns: 10vw 80vw 10vw;
-        grid-template-columns: 10vw 80vw 10vw;
-    -ms-grid-rows: auto 80vw auto auto;
-        grid-template-rows: auto 80vw auto auto;
+    -ms-grid-columns: 10vw 65vw 10vw;
+        grid-template-columns: 10vw 65vw 10vw;
+    -ms-grid-rows: auto 65vw auto auto;
+        grid-template-rows: auto 65vw auto auto;
   }
 }
 
 @media screen and (orientation: landscape) {
   .grid-container {
-    -ms-grid-columns: auto 80vh auto;
-        grid-template-columns: auto 80vh auto;
-    -ms-grid-rows: 10vh 80vh 10vh auto;
-        grid-template-rows: 10vh 80vh 10vh auto;
+    -ms-grid-columns: auto 65vh auto;
+        grid-template-columns: auto 65vh auto;
+    -ms-grid-rows: 10vh 65vh 10vh auto;
+        grid-template-rows: 10vh 65vh 10vh auto;
   }
 }
 
