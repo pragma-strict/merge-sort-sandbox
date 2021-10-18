@@ -6,11 +6,9 @@ let ID_INPUT_SIZE = 'interface-input-size';
 let ID_INPUT_SIZE_WRAPPER = 'interface-input-size-wrapper';
 let ID_RATE = 'interface-rate';
 let ID_USE_CUSTOM_DATA = 'interface-custom-data';
-//let ID_RESTART = 'interface-restart';
 
 let INTERFACE_DATA;
 let INTERFACE_INPUT_SIZE;
-//let INTERFACE_RESTART;
 let INTERFACE_RATE;
 
 // 
@@ -62,7 +60,7 @@ function getInput(){
       input_full.push(floor(Math.random() * input_size));
     }
   }
-  mergeSort();
+  render();
 }
 
 
