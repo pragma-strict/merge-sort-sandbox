@@ -1,19 +1,3 @@
-/*  Notes:
-    There are two ways that I can see to implement step-by-step execution.
-    1. Use timeouts or something to delay the execution of each loop and stop it when you click pause
-      Pros:
-      - Potentially easier to implement
-      Cons:
-      - Not as flexible. Harder to undo steps if user wants to go back a step
-      - Execution of the algorithm is coupled to the display of the algorithm state
-    
-    2. Create a list of operations which can be 
-      Pros:
-      - Flexible. Execution is not coupled to display so it will be easy to allow user to advance, reverse, and navigate to any step at any time
-      Cons:
-      - Potentially more difficult to implement
-*/
-
 // DOM Ids and elements
 let ID_PARENT = 'p5-canvas-container';
 let ID_DATA = 'interface-data';
@@ -27,26 +11,19 @@ let INTERFACE_DATA;
 let INTERFACE_INPUT_SIZE;
 let INTERFACE_RATE;
 
-// 
-let canvas;
+let p5Display;
 let input_full = [];
 let isCustomDataEnabled = false;
 
 
-// Style variables
-let bar_padding_top = 25; // The space between the top of the tallest bar and the top of the window (px)
-
-
 
 function setup() {
-  let parentStyle = window.getComputedStyle(document.getElementById(ID_PARENT));
-  canvas = createCanvas(parseInt(parentStyle.width), parseInt(parentStyle.height));
-  canvas.parent(ID_PARENT);
+  p5Display = new Display();
+  p5Display.createCanvas(ID_PARENT);
 
   // Initialize interface stuff
   INTERFACE_DATA = document.getElementById(ID_DATA);
   INTERFACE_RATE = document.getElementById(ID_RATE);
-  //INTERFACE_RATE.onchange = update speed;
   INTERFACE_INPUT_SIZE = document.getElementById(ID_INPUT_SIZE);
 
   noLoop();
@@ -57,26 +34,23 @@ function setup() {
 
 
 function windowResized() {
-  let parentStyle = window.getComputedStyle(document.getElementById(ID_PARENT));
-	resizeCanvas(parseInt(parentStyle.width), parseInt(parentStyle.height));
-	render();
+  p5Display.updateCanvasSize();
 }
 
 
 
 // Either generates input or calls parseInputData(). Input will be ready after calling.
 function getInput(){
-  input_full = []; // Clear previous input
+  p5Display.clearData();
   if(isCustomDataEnabled){
     parseInputData();
   }
   else{
     let input_size = INTERFACE_INPUT_SIZE.value;
     for(let i = 0; i < input_size; i++){
-      input_full.push(floor(Math.random() * input_size));
+      p5Display.pushData(floor(Math.random() * input_size));
     }
   }
-  render();
 }
 
 
@@ -84,7 +58,6 @@ function getInput(){
 // Runs merge sort and renders the result
 function mergeSort(){
   input_full = mergeSortRecursive(input_full);
-  render();
 }
 
 
@@ -162,7 +135,7 @@ function parseInputData(){
     }
     else{   // Current char is NOT a number
       if(isPrevCharNumber){
-        input_full.push(number);
+        p5Display.pushData(number);
         number = 0;
         isPrevCharNumber = false;
       }
@@ -170,51 +143,6 @@ function parseInputData(){
   }
   // If the string ended on a number, include it too.
   if(isPrevCharNumber){
-    input_full.push(number);
-  }
-}
-
-
-
-// A single simulation step
-function tick(){
-
-}
-
-
-
-function draw(){
-  tick();
-  //render();
-}
-
-
-
-function render()
-{
-  background(BG_COL);
-  fill(0);
-  stroke(BG_COL);
-  strokeWeight(2);
-  let number_of_bars = input_full.length
-  if(number_of_bars > 0){
-    if(number_of_bars > 32){
-      stroke(0);
-      strokeWeight(1);
-    }
-    let bar_width = width / number_of_bars;
-    let max_number = Math.max(...input_full);
-    for(let i = 0; i < number_of_bars; i++){
-      let bar_height = map(input_full[i], 0, max_number, 0, height - bar_padding_top);
-      rect(bar_width * i, height - bar_height, bar_width, bar_height);
-    }
-  }
-}
-
-
-
-function keyPressed(){
-  if(key == ' '){
-    tick();
+    p5Display.pushData(number);
   }
 }
