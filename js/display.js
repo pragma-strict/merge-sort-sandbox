@@ -1,5 +1,8 @@
 /*
    This class will contain the p5 canvas and all methods related to things that are displayed on the canvas. The display will initially only produce bar graphs that represent numerical data sets. It will also include a set of methods that can be called externally (by the user interface or sorting algorithms) to update the properties of bars in the graph i.e. height, colour, and swaps. 
+
+   TODO:
+   - Define an array of display states or transition functions or something. Basically, define the interface that the mergesort algorithm will interact with as it executes. Will it be a list of states? Will be a list of instructions?
 */
 
 class Display{
