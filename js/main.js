@@ -1,3 +1,19 @@
+/*  Notes:
+    There are two ways that I can see to implement step-by-step execution.
+    1. Use timeouts or something to delay the execution of each loop and stop it when you click pause
+      Pros:
+      - Potentially easier to implement
+      Cons:
+      - Not as flexible. Harder to undo steps if user wants to go back a step
+      - Execution of the algorithm is coupled to the display of the algorithm state
+    
+    2. Create a list of operations which can be 
+      Pros:
+      - Flexible. Execution is not coupled to display so it will be easy to allow user to advance, reverse, and navigate to any step at any time
+      Cons:
+      - Potentially more difficult to implement
+*/
+
 // DOM Ids and elements
 let ID_PARENT = 'p5-canvas-container';
 let ID_DATA = 'interface-data';
