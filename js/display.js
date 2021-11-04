@@ -10,6 +10,7 @@ class Display{
       this.parentID;
       this.canvas;
       this.data = [];
+      this.selectedIndexes = [];
       this.bar_padding_top = 25; // Space between the top of the tallest bar and the top of the window (px)
    }
 
@@ -26,6 +27,27 @@ class Display{
       resizeCanvas(parseInt(parentStyle.width), parseInt(parentStyle.height));
       this.render();
    }
+
+
+   selectData(index, bDeselect){
+      console.log("selecting: " + index + " and deselect is: " + bDeselect);
+      if(index){
+         console.log("selected indexes before: " + p5Display.selectedIndexes)
+         if(bDeselect){
+            p5Display.selectedIndexes = p5Display.selectedIndexes.filter(
+               function(value, i, arr){
+                  return value != index;
+               }
+            );
+         }
+         else{
+            p5Display.selectedIndexes.push(index);
+         }
+         console.log("selected indexes after: " + p5Display.selectedIndexes)
+         p5Display.render();
+      }
+   }
+
 
    setData(data){
       this.data = data;
@@ -56,6 +78,12 @@ class Display{
          let bar_width = width / number_of_bars;
          let max_number = Math.max(...this.data);
          for(let i = 0; i < number_of_bars; i++){
+            if(this.selectedIndexes.includes(i)){
+               fill(55, 183, 0);
+            }
+            else{
+               fill(0);
+            }
             let bar_height = map(this.data[i], 0, max_number, 0, height - this.bar_padding_top);
             rect(bar_width * i, height - bar_height, bar_width, bar_height);
          }

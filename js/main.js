@@ -12,7 +12,8 @@ let INTERFACE_INPUT_SIZE;
 let INTERFACE_RATE;
 
 let p5Display;
-let input_full = [];
+let displayTimeline = [];
+let displayPlayhead = 0;
 let isCustomDataEnabled = false;
 
 
@@ -25,6 +26,12 @@ function setup() {
   INTERFACE_DATA = document.getElementById(ID_DATA);
   INTERFACE_RATE = document.getElementById(ID_RATE);
   INTERFACE_INPUT_SIZE = document.getElementById(ID_INPUT_SIZE);
+
+  displayTimeline.push( [p5Display.selectData, [1, false] ] )
+  displayTimeline.push( [p5Display.selectData, [5, false] ] )
+  displayTimeline.push( [p5Display.selectData, [6, false] ] )
+  displayTimeline.push( [p5Display.selectData, [6, true] ] )
+  displayTimeline.push( [p5Display.selectData, [3, false] ] )
 
   noLoop();
   updateFormFieldVisibility();
@@ -50,6 +57,29 @@ function getInput(){
     for(let i = 0; i < input_size; i++){
       p5Display.pushData(floor(Math.random() * input_size));
     }
+  }
+}
+
+
+
+function previousState(){
+  if(displayPlayhead > 0){
+    let operation = displayTimeline[displayPlayhead][0];
+    let args = displayTimeline[displayPlayhead][1]
+    args[args.length -1] = !args[args.length -1];
+    operation(...args)
+    displayPlayhead--;
+  }
+}
+
+
+
+function nextState(){
+  if(displayPlayhead < displayTimeline.length -1){
+    let operation = displayTimeline[displayPlayhead][0];
+    let args = displayTimeline[displayPlayhead][1]
+    operation(...args)
+    displayPlayhead++;
   }
 }
 
