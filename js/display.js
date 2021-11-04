@@ -29,9 +29,10 @@ class Display{
    }
 
 
-   selectData(index, bDeselect){
+   // Maybe we should use an actual interface for these functions. Is there such a thing in javascript?
+   selectData(index, reverse){
       if(index){
-         if(bDeselect){
+         if(reverse){
             p5Display.selectedIndexes = p5Display.selectedIndexes.filter(
                function(value, i, arr){
                   return value != index;
@@ -41,6 +42,19 @@ class Display{
          else{
             p5Display.selectedIndexes.push(index);
          }
+         p5Display.render();
+      }
+   }
+
+
+   // This doesn't currently update the indexes in the selectedIndexes array. 
+   // This whole business of accessing this class as if from outside the class is weird. Maybe we can pass the this pointer in somehow?
+   // We might want the bars to be their own objects. This could be useful so that we could store their selected state (or even just colour) but also so that we could store their height or width since I know I probably want to have the selected bars move a little bit when they're selected.
+   swap(i, j, reverse){
+      if(i >= 0 && i < p5Display.data.length && j >= 0 && j < p5Display.data.length){
+         let temp = p5Display.data[i];
+         p5Display.data[i] = p5Display.data[j];
+         p5Display.data[j] = temp;
          p5Display.render();
       }
    }

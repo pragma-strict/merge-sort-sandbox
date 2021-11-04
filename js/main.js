@@ -14,6 +14,7 @@ let INTERFACE_RATE;
 let p5Display;
 let displayTimeline = [];
 let displayPlayhead = 0;
+
 let isCustomDataEnabled = false;
 
 
@@ -32,6 +33,8 @@ function setup() {
   displayTimeline.push( [p5Display.selectData, [6, false] ] )
   displayTimeline.push( [p5Display.selectData, [6, true] ] )
   displayTimeline.push( [p5Display.selectData, [3, false] ] )
+  displayTimeline.push( [p5Display.swap, [8, 12, false] ] )
+  displayTimeline.push( [p5Display.selectData, [3, true] ] )
 
   noLoop();
   updateFormFieldVisibility();
@@ -63,7 +66,7 @@ function getInput(){
 
 
 function nextState(){
-  if(displayPlayhead < displayTimeline.length -1){
+  if(displayPlayhead < displayTimeline.length){
     let operation = displayTimeline[displayPlayhead][0];
     let args = displayTimeline[displayPlayhead][1]
     operation(...args)
@@ -79,7 +82,7 @@ function previousState(){
     let operation = displayTimeline[displayPlayhead][0];
     let args = displayTimeline[displayPlayhead][1]
     let argsRev = [...args];
-    argsRev[args.length -1] = !args[args.length -1]
+    argsRev[args.length -1] = !args[args.length -1]; // Invert the truth state of last argument
     operation(...argsRev)
   }
 }
