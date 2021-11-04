@@ -62,18 +62,6 @@ function getInput(){
 
 
 
-function previousState(){
-  if(displayPlayhead > 0){
-    let operation = displayTimeline[displayPlayhead][0];
-    let args = displayTimeline[displayPlayhead][1]
-    args[args.length -1] = !args[args.length -1];
-    operation(...args)
-    displayPlayhead--;
-  }
-}
-
-
-
 function nextState(){
   if(displayPlayhead < displayTimeline.length -1){
     let operation = displayTimeline[displayPlayhead][0];
@@ -82,6 +70,20 @@ function nextState(){
     displayPlayhead++;
   }
 }
+
+
+
+function previousState(){
+  if(displayPlayhead > 0){
+    displayPlayhead--;
+    let operation = displayTimeline[displayPlayhead][0];
+    let args = displayTimeline[displayPlayhead][1]
+    let argsRev = [...args];
+    argsRev[args.length -1] = !args[args.length -1]
+    operation(...argsRev)
+  }
+}
+
 
 
 

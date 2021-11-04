@@ -30,9 +30,7 @@ class Display{
 
 
    selectData(index, bDeselect){
-      console.log("selecting: " + index + " and deselect is: " + bDeselect);
       if(index){
-         console.log("selected indexes before: " + p5Display.selectedIndexes)
          if(bDeselect){
             p5Display.selectedIndexes = p5Display.selectedIndexes.filter(
                function(value, i, arr){
@@ -43,7 +41,6 @@ class Display{
          else{
             p5Display.selectedIndexes.push(index);
          }
-         console.log("selected indexes after: " + p5Display.selectedIndexes)
          p5Display.render();
       }
    }
