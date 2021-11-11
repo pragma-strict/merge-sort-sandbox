@@ -89,10 +89,12 @@ function previousState(){
 
 
 
-
 // Runs merge sort and renders the result
 function mergeSort(){
-  input_full = mergeSortRecursive(input_full);
+  let mergeResults = mergeSortRecursiveInversions(p5Display.data, 0);
+  p5Display.data = mergeResults.arr;
+  console.log("Number of inversions: " + mergeResults.inv);
+  p5Display.render()
 }
 
 
@@ -131,6 +133,61 @@ function mergeSortRecursive(input){
   sorted_list = sorted_list.concat(p2.slice(p2_index, p2.length));
 
   return sorted_list;
+}
+
+
+
+// The recursive component of the merge sort function which also counts the number of inversions
+function mergeSortRecursiveInversions(input){
+  // Base case
+  if(input.length <= 1){
+    return {
+      arr : input,
+      inv : 0
+    };
+  }
+
+  // Split step
+  let slice_index = floor(input.length/2);
+  let inversionCount = 0;
+
+  let p1 = input.slice(0, slice_index);
+  sortResultsLeft = mergeSortRecursiveInversions(p1);
+  p1 = sortResultsLeft.arr;
+  inversionCount += sortResultsLeft.inv;
+
+  let p2 = input.slice(slice_index, input.length);
+  sortResultsRight = mergeSortRecursiveInversions(p2);
+  p2 = sortResultsRight.arr;
+  inversionCount += sortResultsRight.inv;
+
+  // Merge step
+  let sorted_list = [];
+  let smallerNumber = 0;
+  let p1_index = 0;
+  let p2_index = 0;
+  while(p1_index < p1.length && p2_index < p2.length){
+    if(p1[p1_index] <= p2[p2_index]){
+      smallerNumber = p1[p1_index];
+      p1_index++;
+    }
+    else{
+      smallerNumber = p2[p2_index];
+      console.log("right number " + p2[p2_index] + " > left number " + p1[p1_index] + ". Adding " + (p1.length - p1_index));
+      inversionCount += (p1.length - p1_index)
+      p2_index++;
+    }
+    sorted_list.push(smallerNumber);
+  }
+  sorted_list = sorted_list.concat(p1.slice(p1_index, p1.length));
+  sorted_list = sorted_list.concat(p2.slice(p2_index, p2.length));
+
+  console.log("returning. inversion count: " + inversionCount)
+
+  return {
+    arr : sorted_list,
+    inv : inversionCount
+  };
 }
 
 
