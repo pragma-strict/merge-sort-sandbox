@@ -1,26 +1,36 @@
 /*
-   This class will contain the p5 canvas and all methods related to things that are displayed on the canvas. The display will initially only produce bar graphs that represent numerical data sets. It will also include a set of methods that can be called externally (by the user interface or sorting algorithms) to update the properties of bars in the graph i.e. height, colour, and swaps. 
-
-   TODO:
-   - Define an array of display states or transition functions or something. Basically, define the interface that the mergesort algorithm will interact with as it executes. Will it be a list of states? Will be a list of instructions?
+   TODO/NOTES:
+   - Make the timeline (list of function calls) part of this class. Then add next/prev functions to go between them. This will save us having to use the class name in the interface methods because they won't be copied and used outside of the class. However, we might want to change the name of Display to reflect the fact that it has both display and timeline functions.
+   - BETTER IDEA: timelines (steps) will be stored in a child class that will use the display methods. There could be different algorithms implemented in the subclass or there could even be another layer of subclasses with one for each algorithm.
+   - Another class at the very top level of the hierarchy could be display-type independent functions such as setting up the canvas and stuff. This could be used to implement different display types.
+   - Make the objects of display their own objects. Make a Bar class to hold additional information about
+   the way that each bar is being displayed.
+   - Give a prefix to interface methods and document them carefully.
+   - Keep in mind that this would ideally be extensible enough to include other algorithms and display methods such as trees, etc. 
+   - Each interface method must be reversible.
 */
 
+/*
+   Display maintains a p5.js canvas, stores some data, and has methods for displaying the data.
+*/
 class Display{
-   constructor(){
-      this.parentID;
+   constructor(parentID){
+      this.parentID = parentID;
       this.canvas;
       this.data = [];
+      this.initializeCanvas();
       this.selectedIndexes = [];
       this.bar_padding_top = 25; // Space between the top of the tallest bar and the top of the window (px)
    }
 
-   createCanvas(parentID){
-      this.parentID = parentID;
+
+   initializeCanvas(){
       let parentStyle = window.getComputedStyle(document.getElementById(this.parentID));
       this.canvas = createCanvas(parseInt(parentStyle.width), parseInt(parentStyle.height));
       this.canvas.parent(this.parentID);
       this.render();
    }
+
 
    updateCanvasSize(){
       let parentStyle = window.getComputedStyle(document.getElementById(ID_PARENT));
@@ -29,36 +39,42 @@ class Display{
    }
 
 
-   // Maybe we should use an actual interface for these functions. Is there such a thing in javascript?
-   selectData(index, reverse){
+   // Interface method. Selects one of the pieces of data.
+   select(index, obj, reverse = false){
       if(index){
          if(reverse){
-            p5Display.selectedIndexes = p5Display.selectedIndexes.filter(
+            obj.selectedIndexes = obj.selectedIndexes.filter(
                function(value, i, arr){
                   return value != index;
                }
             );
          }
          else{
-            p5Display.selectedIndexes.push(index);
+            obj.selectedIndexes.push(index);
          }
-         p5Display.render();
+         obj.render();
       }
+   }
+
+
+   // Interface method. Deselects one of the pieces of data.
+   deselect(index, obj, reverse = false){
+      obj.select(index, obj, !reverse);
    }
 
 
    // This doesn't currently update the indexes in the selectedIndexes array. 
    // This whole business of accessing this class as if from outside the class is weird. Maybe we can pass the this pointer in somehow?
    // We might want the bars to be their own objects. This could be useful so that we could store their selected state (or even just colour) but also so that we could store their height or width since I know I probably want to have the selected bars move a little bit when they're selected.
-   swap(i, j, reverse){
-      if(i >= 0 && i < p5Display.data.length && j >= 0 && j < p5Display.data.length){
-         let temp = p5Display.data[i];
-         p5Display.data[i] = p5Display.data[j];
-         p5Display.data[j] = temp;
-         p5Display.render();
+   // Interface method. Swaps two pieces of data.
+   swap(i, j, obj){
+      if(i >= 0 && i < obj.data.length && j >= 0 && j < obj.data.length){
+         let temp = obj.data[i];
+         obj.data[i] = obj.data[j];
+         obj.data[j] = temp;
+         obj.render();
       }
    }
-
 
    setData(data){
       this.data = data;
@@ -98,6 +114,65 @@ class Display{
             let bar_height = map(this.data[i], 0, max_number, 0, height - this.bar_padding_top);
             rect(bar_width * i, height - bar_height, bar_width, bar_height);
          }
+      }
+   }
+}
+
+
+/*
+   Algorithm implements various algorithms to operate on the data stored in parent class Display. 
+   Algorithm generates and maintains a sequence of methods of the Display class which show the steps
+   of the algorithms visually. 
+*/
+class Algorithm extends Display{
+   constructor(parentID){
+      super(parentID);
+      this.steps = [];
+      this.currentStep = 0;
+      this.generateSteps();
+   }
+
+   generateSteps(){
+      this.steps.push({
+         'func' : this.select,
+         'args' : [2, this]
+      });
+      this.steps.push({
+         'func' : this.select,
+         'args' : [5, this]
+      });
+      this.steps.push({
+         'func' : this.select,
+         'args' : [6, this]
+      });
+      this.steps.push({
+         'func' : this.swap,
+         'args' : [8, 12, this]
+      });
+      this.steps.push({
+         'func' : this.deselect,
+         'args' : [5, this]
+      });
+   }
+
+   // Execute the next step in the algorithm
+   next(){
+      console.log("current step: " + this.currentStep);
+      if(this.currentStep < this.steps.length){
+         let func = this.steps[this.currentStep]['func'];
+         let args = this.steps[this.currentStep]['args'];
+         func(...args)
+         this.currentStep++;
+      }
+   }
+
+   // Execute the previous step in the algorithm
+   prev(){
+      if(this.currentStep > 0){
+         this.currentStep--;
+         let func = this.steps[this.currentStep]['func'];
+         let args = this.steps[this.currentStep]['args'];
+         func(...args, true);
       }
    }
 }
