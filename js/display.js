@@ -19,7 +19,6 @@ class Display{
       this.canvas;
       this.data = [];
       this.initializeCanvas();
-      this.selectedIndexes = [];
       this.bar_padding_top = 25; // Space between the top of the tallest bar and the top of the window (px)
    }
 
@@ -42,16 +41,11 @@ class Display{
    // Interface method. Selects one of the pieces of data.
    select(index, obj, reverse = false){
       if(index){
+         let newColor = color(30, 179, 0);
          if(reverse){
-            obj.selectedIndexes = obj.selectedIndexes.filter(
-               function(value, i, arr){
-                  return value != index;
-               }
-            );
+            newColor = 0;
          }
-         else{
-            obj.selectedIndexes.push(index);
-         }
+         obj.data[index].color = newColor;
          obj.render();
       }
    }
@@ -63,9 +57,6 @@ class Display{
    }
 
 
-   // This doesn't currently update the indexes in the selectedIndexes array. 
-   // This whole business of accessing this class as if from outside the class is weird. Maybe we can pass the this pointer in somehow?
-   // We might want the bars to be their own objects. This could be useful so that we could store their selected state (or even just colour) but also so that we could store their height or width since I know I probably want to have the selected bars move a little bit when they're selected.
    // Interface method. Swaps two pieces of data.
    swap(i, j, obj){
       if(i >= 0 && i < obj.data.length && j >= 0 && j < obj.data.length){
@@ -77,12 +68,17 @@ class Display{
    }
 
    setData(data){
-      this.data = data;
+      for(let i = 0; i < data.length; i++){
+         this.pushData(data[i]);
+      }
       this.render();
    }
 
    pushData(number){
-      this.data.push(number);
+      this.data.push({
+         value : number,
+         color : 0
+      });
       this.render();
    }
 
@@ -96,22 +92,18 @@ class Display{
       fill(0);
       stroke(BG_COL);
       strokeWeight(2);
-      let number_of_bars = this.data.length
+      let number_of_bars = this.data.length;
       if(number_of_bars > 0){
          if(number_of_bars > 32){
             stroke(0);
             strokeWeight(1);
          }
          let bar_width = width / number_of_bars;
-         let max_number = Math.max(...this.data);
+         // let max_number = Math.max(...this.data);
+         let max_number = 25;
          for(let i = 0; i < number_of_bars; i++){
-            if(this.selectedIndexes.includes(i)){
-               fill(55, 183, 0);
-            }
-            else{
-               fill(0);
-            }
-            let bar_height = map(this.data[i], 0, max_number, 0, height - this.bar_padding_top);
+            fill(this.data[i].color);
+            let bar_height = map(this.data[i].value, 0, max_number, 0, height - this.bar_padding_top);
             rect(bar_width * i, height - bar_height, bar_width, bar_height);
          }
       }
@@ -157,7 +149,6 @@ class Algorithm extends Display{
 
    // Execute the next step in the algorithm
    next(){
-      console.log("current step: " + this.currentStep);
       if(this.currentStep < this.steps.length){
          let func = this.steps[this.currentStep]['func'];
          let args = this.steps[this.currentStep]['args'];
