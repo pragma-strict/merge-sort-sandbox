@@ -82,46 +82,50 @@ function previousState(){
 
 // Runs merge sort and renders the result
 function mergeSort(){
-  let mergeResults = mergeSortRecursiveInversions(p5Display.data, 0);
-  p5Display.data = mergeResults.arr;
-  console.log("Number of inversions: " + mergeResults.inv);
-  p5Display.render()
+  inversionCount = 0;
+  console.log(algo.getValues())
+  let sortedValues = mergeSortRecursive(algo.getValues());
+  console.log("Number of inversions: " + inversionCount);
+  algo.setValues(sortedValues);
 }
 
 
 
-// The recursive component of the merge sort function
+// Create a global inversion counter
+let inversionCount = 0;
+
+// Recursive mergesort that also counts inversions in the input
 function mergeSortRecursive(input){
-  // Base case
-  if(input.length <= 1){
+  if(input.length <= 1){  // Base case
     return input;
   }
 
   // Split step
   let slice_index = floor(input.length/2);
-  let p1 = input.slice(0, slice_index);
-  p1 = mergeSortRecursive(p1);
-  let p2 = input.slice(slice_index, input.length);
-  p2 = mergeSortRecursive(p2);
+  let subArr1 = input.slice(0, slice_index);
+  let subArr2 = input.slice(slice_index, input.length);
+  subArr1 = mergeSortRecursive(subArr1);
+  subArr2 = mergeSortRecursive(subArr2);
 
   // Merge step
   let sorted_list = [];
   let smallerNumber = 0;
-  let p1_index = 0;
-  let p2_index = 0;
-  while(p1_index < p1.length && p2_index < p2.length){
-    if(p1[p1_index] <= p2[p2_index]){
-      smallerNumber = p1[p1_index];
-      p1_index++;
+  let subIndex1 = 0;
+  let subIndex2 = 0;
+  while(subIndex1 < subArr1.length && subIndex2 < subArr2.length){
+    if(subArr1[subIndex1] <= subArr2[subIndex2]){
+      smallerNumber = subArr1[subIndex1];
+      subIndex1++;
     }
     else{
-      smallerNumber = p2[p2_index];
-      p2_index++;
+      smallerNumber = subArr2[subIndex2];
+      subIndex2++;
+      inversionCount += (subArr1.length - subIndex1); // Add to the inversion counter
     }
     sorted_list.push(smallerNumber);
   }
-  sorted_list = sorted_list.concat(p1.slice(p1_index, p1.length));
-  sorted_list = sorted_list.concat(p2.slice(p2_index, p2.length));
+  sorted_list = sorted_list.concat(subArr1.slice(subIndex1, subArr1.length));
+  sorted_list = sorted_list.concat(subArr2.slice(subIndex2, subArr2.length));
 
   return sorted_list;
 }
@@ -163,7 +167,7 @@ function parseInputData(){
     }
     else{   // Current char is NOT a number
       if(isPrevCharNumber){
-        p5Display.pushData(number);
+        algo.pushData(number);
         number = 0;
         isPrevCharNumber = false;
       }
@@ -171,59 +175,6 @@ function parseInputData(){
   }
   // If the string ended on a number, include it too.
   if(isPrevCharNumber){
-    p5Display.pushData(number);
+    algo.pushData(number);
   }
-}
-
-
-
-
-// The recursive component of the merge sort function which also counts the number of inversions
-function mergeSortRecursiveInversions(input){
-  // Base case
-  if(input.length <= 1){
-    return {
-      arr : input,
-      inv : 0
-    };
-  }
-
-  // Split step
-  let slice_index = floor(input.length/2);
-  let inversionCount = 0;
-
-  let p1 = input.slice(0, slice_index);
-  sortResultsLeft = mergeSortRecursiveInversions(p1);
-  p1 = sortResultsLeft.arr;
-  inversionCount += sortResultsLeft.inv;
-
-  let p2 = input.slice(slice_index, input.length);
-  sortResultsRight = mergeSortRecursiveInversions(p2);
-  p2 = sortResultsRight.arr;
-  inversionCount += sortResultsRight.inv;
-
-  // Merge step
-  let sorted_list = [];
-  let smallerNumber = 0;
-  let p1_index = 0;
-  let p2_index = 0;
-  while(p1_index < p1.length && p2_index < p2.length){
-    if(p1[p1_index] <= p2[p2_index]){
-      smallerNumber = p1[p1_index];
-      p1_index++;
-    }
-    else{
-      smallerNumber = p2[p2_index];
-      inversionCount += (p1.length - p1_index)
-      p2_index++;
-    }
-    sorted_list.push(smallerNumber);
-  }
-  sorted_list = sorted_list.concat(p1.slice(p1_index, p1.length));
-  sorted_list = sorted_list.concat(p2.slice(p2_index, p2.length));
-
-  return {
-    arr : sorted_list,
-    inv : inversionCount
-  };
 }

@@ -67,10 +67,14 @@ class Display{
       }
    }
 
-   setData(data){
-      for(let i = 0; i < data.length; i++){
-         this.pushData(data[i]);
-      }
+   setValues(values){
+      this.data = [];
+      values.forEach(element => {
+         this.data.push({
+            value : element,
+            color : 0
+         });
+      });
       this.render();
    }
 
@@ -85,6 +89,15 @@ class Display{
    clearData(){
       this.data = [];
       this.render();
+   }
+
+   // Return an array of the numerical values of each data point
+   getValues(){
+      let values = [];
+      this.data.forEach(element => {
+         values.push(element.value);
+      });
+      return values;
    }
 
    render(){
